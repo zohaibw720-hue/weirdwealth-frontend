@@ -1,0 +1,49 @@
+
+:root {
+  /* Primary Brand Colors */
+  --color-deep-teal: #031c1b;
+  --color-dark-green: #063c38;
+  --color-mint: #00d6b4;
+  --color-aqua: #65e8d4;
+
+  /* Background Colors */
+  --color-bg: #f7faf8;
+  --color-bg-soft: #eef5f1;
+  --color-surface: #ffffff;
+  --color-off-white: #f7faf8;
+
+  /* Text Colors */
+  --color-white: #f7faf8;
+  --color-heading: #061f1c;
+  --color-body: #62716c;
+  --color-muted: #84918c;
+
+  /* Borders */
+  --color-border: #e4ebe7;
+  --color-border-dark: rgba(255, 255, 255, 0.12);
+
+  /* Typography */
+  --font-heading: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-primary: "Inter", "Segoe UI", Arial, sans-serif;
+
+  /* Layout */
+  --container-width: 1200px;
+  --container-padding: 28px;
+  --header-height: 82px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  /* Shadows */
+  --shadow-soft: 0 10px 35px rgba(3, 28, 27, 0.07);
+  --shadow-card: 0 15px 45px rgba(3, 28, 27, 0.09);
+
+  /* Transitions */
+  --transition: 0.3s ease;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
