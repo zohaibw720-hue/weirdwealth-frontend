@@ -12,7 +12,6 @@ import {
   Share2,
   Copy,
   Check,
-  List,
 } from "lucide-react";
 
 import Header from "../components/layout/Header";
@@ -32,23 +31,16 @@ function getSlug(article) {
 }
 
 function getAuthorName(article) {
-  return (
-    article.author?.name ||
-    article.author ||
-    "WeirdWealth Editorial Team"
-  );
+  return article.author?.name || article.author || "Daniel Carter";
 }
 
 function getArticleImage(article) {
-  return article.image || article.imageUrl || article.coverImage || "";
-}
-
-function getHeadingId(value) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+  return (
+    article.image ||
+    article.imageUrl ||
+    article.coverImage ||
+    ""
+  );
 }
 
 function getContentBlocks(article) {
@@ -57,7 +49,7 @@ function getContentBlocks(article) {
     article.body ||
     article.description ||
     article.excerpt ||
-    "More insights and practical information about this topic will be available soon.";
+    "More information about this topic will be available soon.";
 
   if (Array.isArray(content)) {
     return content
@@ -66,7 +58,7 @@ function getContentBlocks(article) {
           return {
             type: "paragraph",
             text: item,
-            id: `article-paragraph-${index}`,
+            id: `paragraph-${index}`,
           };
         }
 
@@ -80,7 +72,7 @@ function getContentBlocks(article) {
             type: "section",
             heading,
             text,
-            id: getHeadingId(heading),
+            id: `section-${index}`,
           };
         }
 
@@ -88,7 +80,7 @@ function getContentBlocks(article) {
           ? {
               type: "paragraph",
               text,
-              id: `article-paragraph-${index}`,
+              id: `paragraph-${index}`,
             }
           : null;
       })
@@ -101,23 +93,118 @@ function getContentBlocks(article) {
     .filter(Boolean)
     .map((line, index) => {
       if (line.startsWith("## ")) {
-        const heading = line.replace(/^##\s*/, "");
-
         return {
           type: "heading",
-          heading,
-          id: getHeadingId(heading) || `section-${index}`,
+          heading: line.replace(/^##\s*/, ""),
+          id: `heading-${index}`,
         };
       }
 
       return {
         type: "paragraph",
         text: line,
-        id: `article-paragraph-${index}`,
+        id: `paragraph-${index}`,
       };
     });
 }
 
+/* AUTHOR INFORMATION */
+function AuthorInformation({ author, authorName }) {
+  const [copied, setCopied] = useState(false);
+
+  const name = author?.name || authorName || "Daniel Carter";
+
+  const image =
+    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=85";
+
+  const profileSlug = "daniel-carter";
+
+  const handleShare = async () => {
+    const shareData = {
+      title: document.title,
+      text: `Read this article by ${name}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        console.error("Unable to share article:", error);
+      }
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="article-writer-section">
+      <span className="article-writer-label">
+        ABOUT THE WRITER
+      </span>
+
+      <div className="article-writer-card">
+        <div className="article-writer-image">
+          <img src={image} alt={name} />
+        </div>
+
+        <div className="article-writer-details">
+          <span className="article-author-label">
+            ABOUT THE AUTHOR
+          </span>
+
+          <h3>{name}</h3>
+
+          <p>Finance &amp; Business Writer</p>
+
+          <Link
+            to={`/authors/${profileSlug}`}
+            className="article-author-profile-link"
+          >
+            View Author Profile
+            <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </div>
+
+      <div className="article-writer-actions">
+        <button type="button" onClick={handleShare}>
+          <Share2 size={16} />
+          Share Article
+        </button>
+
+        <button type="button" onClick={handleCopy}>
+          {copied ? <Check size={16} /> : <Copy size={16} />}
+          {copied ? "Link Copied" : "Copy Link"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ARTICLE NOT FOUND */
 function ArticleNotFound() {
   return (
     <>
@@ -133,12 +220,11 @@ function ArticleNotFound() {
 
           <p>
             The article may have been moved or is no longer available.
-            Explore our latest insights to discover another story.
           </p>
 
-          <Link to="/blog" className="primary-button">
-            <ArrowLeft size={18} />
-            Back to Blog
+          <Link to="/blog" className="article-back-link">
+            <ArrowLeft size={17} />
+            Back to Articles
           </Link>
         </div>
       </main>
@@ -148,13 +234,17 @@ function ArticleNotFound() {
   );
 }
 
-function ArticleContent({ article }) {
+/* ARTICLE BODY */
+function ArticleBody({ article }) {
   const blocks = getContentBlocks(article);
 
   return (
-    <div className="article-body" id="article-content">
+    <div className="article-body">
       {blocks.map((block) => {
-        if (block.type === "heading" || block.type === "section") {
+        if (
+          block.type === "heading" ||
+          block.type === "section"
+        ) {
           return (
             <section
               className="article-content-section"
@@ -162,6 +252,7 @@ function ArticleContent({ article }) {
               key={block.id}
             >
               <h2>{block.heading}</h2>
+
               {block.text && <p>{block.text}</p>}
             </section>
           );
@@ -173,117 +264,7 @@ function ArticleContent({ article }) {
   );
 }
 
-function AuthorCard({ author, fallbackName }) {
-  if (!author) {
-    return (
-      <div className="article-author-card" id="article-author">
-        <div className="article-author-avatar article-author-fallback">
-          <UserRound size={28} />
-        </div>
-
-        <div className="article-author-info">
-          <span className="section-eyebrow">WRITTEN BY</span>
-          <h3>{fallbackName}</h3>
-          <p>WeirdWealth Editorial Team</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="article-author-card" id="article-author">
-      <img
-        src={author.image}
-        alt={author.name}
-        className="article-author-avatar"
-        loading="lazy"
-      />
-
-      <div className="article-author-info">
-        <span className="section-eyebrow">ABOUT THE AUTHOR</span>
-
-        <h3>
-          <Link to={`/authors/${author.slug}`}>
-            {author.name}
-          </Link>
-        </h3>
-
-        <p>{author.role}</p>
-
-        <Link
-          to={`/authors/${author.slug}`}
-          className="article-author-profile-link"
-        >
-          View Author Profile
-          <ArrowUpRight size={15} />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function ShareArticle({ title }) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleShare() {
-    const shareData = {
-      title,
-      url: window.location.href,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        return;
-      } catch (error) {
-        if (error.name === "AbortError") return;
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-
-      window.setTimeout(() => {
-        setCopied(false);
-      }, 2500);
-    } catch {
-      window.prompt("Copy this article link:", window.location.href);
-    }
-  }
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-
-      window.setTimeout(() => {
-        setCopied(false);
-      }, 2500);
-    } catch {
-      window.prompt("Copy this article link:", window.location.href);
-    }
-  }
-
-  return (
-    <div className="article-share-actions">
-      <button type="button" onClick={handleShare}>
-        <Share2 size={16} />
-        Share Article
-      </button>
-
-      <button
-        type="button"
-        onClick={handleCopy}
-        aria-label="Copy article link"
-      >
-        {copied ? <Check size={16} /> : <Copy size={16} />}
-        {copied ? "Copied" : "Copy Link"}
-      </button>
-    </div>
-  );
-}
-
+/* MAIN ARTICLE PAGE */
 export default function ArticleDetail() {
   const { slug } = useParams();
 
@@ -300,7 +281,7 @@ export default function ArticleDetail() {
 
   const matchedAuthor = authors.find(
     (item) =>
-      item.name.toLowerCase() ===
+      item.name?.toLowerCase() ===
       String(authorName).toLowerCase()
   );
 
@@ -311,71 +292,47 @@ export default function ArticleDetail() {
 
   const readTime = article.readTime || "5 min read";
 
-  const contentBlocks = getContentBlocks(article);
-
-  const contentHeadings = contentBlocks.filter(
-    (block) =>
-      block.type === "heading" ||
-      block.type === "section"
-  );
-
   const relatedArticles = articles
     .filter((item) => getSlug(item) !== getSlug(article))
     .sort((a, b) => {
-      const aMatch = a.category === article.category ? 1 : 0;
-      const bMatch = b.category === article.category ? 1 : 0;
+      const aMatch =
+        a.category === article.category ? 1 : 0;
+
+      const bMatch =
+        b.category === article.category ? 1 : 0;
+
       return bMatch - aMatch;
     })
     .slice(0, 3);
-
-  const heroImage =
-    image ||
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2200&q=85";
 
   return (
     <>
       <Header />
 
-      <main className="article-detail-page">
-        {/* ARTICLE HERO */}
-        <section className="article-detail-header article-image-hero">
-          <div
-            className="article-hero-background"
-            style={{ backgroundImage: `url("${heroImage}")` }}
-            aria-hidden="true"
-          />
-          <div className="article-hero-overlay" aria-hidden="true" />
-
-          <div className="container article-hero-container">
+      <main className="article-detail-page article-clean-page">
+        {/* TITLE */}
+        <section className="article-clean-intro">
+          <div className="container">
             <Link to="/blog" className="article-back-link">
               <ArrowLeft size={17} />
-              Back to Insights
+              Back to Articles
             </Link>
 
-            <div className="article-heading">
+            <div className="article-clean-heading">
               <span className="section-eyebrow">
-                {article.category || "WEIRDWEALTH INSIGHTS"}
+                {article.category || "WEIRDWEALTH"}
               </span>
 
               <h1>{article.title}</h1>
 
               <p className="article-excerpt">
-                {article.excerpt ||
-                  article.description ||
-                  "Discover fresh perspectives and practical ideas from WeirdWealth."}
+                {article.excerpt || article.description || ""}
               </p>
 
               <div className="article-meta">
                 <span>
                   <UserRound size={16} />
-
-                  {matchedAuthor ? (
-                    <Link to={`/authors/${matchedAuthor.slug}`}>
-                      {matchedAuthor.name}
-                    </Link>
-                  ) : (
-                    authorName
-                  )}
+                  {authorName}
                 </span>
 
                 {date && (
@@ -390,91 +347,54 @@ export default function ArticleDetail() {
                   {readTime}
                 </span>
               </div>
-
-              <ShareArticle title={article.title} />
             </div>
           </div>
-
-          <div className="article-hero-bottom">
-            <span>WEIRDWEALTH / EDITORIAL</span>
-            <span>IDEAS WORTH EXPLORING</span>
-          </div>
         </section>
 
-        {/* ARTICLE COVER */}
-        <section className="article-cover-section">
-          <div className="container">
-            {image ? (
-              <div className="article-cover-image">
-                <img
-                  src={image}
-                  alt={article.title}
-                  fetchPriority="high"
-                />
-              </div>
-            ) : (
-              <div className="article-cover-placeholder">
-                <BookOpen size={48} />
-                <span>WEIRDWEALTH EDITORIAL</span>
-              </div>
-            )}
-          </div>
+        {/* FEATURED ARTICLE IMAGE */}
+        <section className="article-clean-cover">
+          {image ? (
+            <img
+              src={image}
+              alt={article.title}
+              fetchPriority="high"
+            />
+          ) : (
+            <div className="article-cover-placeholder">
+              <BookOpen size={45} />
+              <span>WEIRDWEALTH EDITORIAL</span>
+            </div>
+          )}
         </section>
 
-        {/* ARTICLE CONTENT */}
-        <section className="article-main-content section-padding">
+        {/* ARTICLE DETAILS */}
+        <section className="article-main-content">
           <div className="container">
             <div className="article-layout">
               <article className="article-reading-area">
-                <nav
-                  className="article-table-of-contents"
-                  aria-label="Article contents"
-                >
-                  <div className="article-toc-heading">
-                    <List size={19} />
-                    <h2>In This Article</h2>
-                  </div>
+                <div className="article-content-heading">
+                  <span className="section-eyebrow">
+                    THE STORY
+                  </span>
 
-                  <a href="#article-content">
-                    Article Overview
-                  </a>
+                  <h2>Article Overview</h2>
+                </div>
 
-                  {contentHeadings.map((heading) => (
-                    <a
-                      href={`#${heading.id}`}
-                      key={heading.id}
-                    >
-                      {heading.heading}
-                    </a>
-                  ))}
+                <ArticleBody article={article} />
 
-                  <a href="#article-author">
-                    About the Author
-                  </a>
-
-                  <a href="#related-stories">
-                    Related Stories
-                  </a>
-                </nav>
-
-                <ArticleContent article={article} />
+                {/* AUTHOR SECTION WITH SHARE AND COPY BUTTONS */}
+                <AuthorInformation
+                  author={matchedAuthor}
+                  authorName={authorName}
+                />
 
                 <div className="article-end-note">
                   <span>WEIRDWEALTH</span>
+
                   <p>
-                    Ideas worth exploring. Knowledge worth sharing.
+                    Modern Wealth. Modern Thinking.
                   </p>
                 </div>
-
-                <div className="article-bottom-share">
-                  <span>Found this article useful?</span>
-                  <ShareArticle title={article.title} />
-                </div>
-
-                <AuthorCard
-                  author={matchedAuthor}
-                  fallbackName={authorName}
-                />
 
                 <Link to="/blog" className="article-back-link">
                   <ArrowLeft size={17} />
@@ -482,40 +402,32 @@ export default function ArticleDetail() {
                 </Link>
               </article>
 
+              {/* RELATED STORIES */}
               <aside className="article-sidebar">
                 <div className="article-sidebar-card">
                   <span className="section-eyebrow">
                     KEEP EXPLORING
                   </span>
 
-                  <h3>More ideas for you.</h3>
+                  <h3>More Ideas For You.</h3>
 
-                  {relatedArticles.length > 0 ? (
-                    <div
-                      className="related-articles-list"
-                      id="related-stories"
-                    >
-                      {relatedArticles.map((item) => (
-                        <Link
-                          to={`/blog/${getSlug(item)}`}
-                          className="related-article-item"
-                          key={item.id || item.slug}
-                        >
-                          <span>
-                            {item.category || "Insights"}
-                          </span>
+                  <div className="related-articles-list">
+                    {relatedArticles.map((item) => (
+                      <Link
+                        to={`/blog/${getSlug(item)}`}
+                        className="related-article-item"
+                        key={item.id || item.slug}
+                      >
+                        <span>
+                          {item.category || "Insights"}
+                        </span>
 
-                          <h4>{item.title}</h4>
+                        <h4>{item.title}</h4>
 
-                          <ArrowUpRight size={17} />
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>
-                      More stories will be available soon.
-                    </p>
-                  )}
+                        <ArrowUpRight size={17} />
+                      </Link>
+                    ))}
+                  </div>
 
                   <Link
                     to="/blog"
@@ -525,25 +437,6 @@ export default function ArticleDetail() {
                     <ArrowUpRight size={16} />
                   </Link>
                 </div>
-
-                {matchedAuthor && (
-                  <div className="article-sidebar-author">
-                    <img
-                      src={matchedAuthor.image}
-                      alt={matchedAuthor.name}
-                      loading="lazy"
-                    />
-
-                    <span>ABOUT THE WRITER</span>
-                    <h3>{matchedAuthor.name}</h3>
-                    <p>{matchedAuthor.role}</p>
-
-                    <Link to={`/authors/${matchedAuthor.slug}`}>
-                      Meet the Author
-                      <ArrowUpRight size={15} />
-                    </Link>
-                  </div>
-                )}
               </aside>
             </div>
           </div>

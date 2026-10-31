@@ -64,27 +64,30 @@ const categories = [
   },
 ];
 
+/* MAIN CATEGORIES DIRECTORY */
 function CategoryDirectory() {
   return (
     <>
       <section className="inner-page-hero categories-main-hero">
         <div className="categories-main-hero-overlay" />
 
-        <div className="container">
-          <span className="section-eyebrow">
-            EXPLORE WEIRDWEALTH
-          </span>
+        <div className="container categories-main-hero-container">
+          <div className="categories-main-hero-content">
+            <span className="section-eyebrow">
+              EXPLORE WEIRDWEALTH
+            </span>
 
-          <h1>
-            Knowledge for
-            <br />
-            <span className="accent-text">Every Direction.</span>
-          </h1>
+            <h1>
+              Knowledge for
+              <br />
+              <span className="accent-text">Every Direction.</span>
+            </h1>
 
-          <p>
-            Explore the topics, ideas and skills that can help
-            you build a smarter and more independent future.
-          </p>
+            <p>
+              Explore the topics, ideas and skills that can help
+              you build a smarter and more independent future.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -94,6 +97,7 @@ function CategoryDirectory() {
             <span className="section-eyebrow">
               OUR CATEGORIES
             </span>
+
             <h2>Find your next area of interest.</h2>
           </div>
 
@@ -164,6 +168,7 @@ function CategoryDirectory() {
   );
 }
 
+/* INDIVIDUAL CATEGORY DETAIL */
 function CategoryDetail({ category }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -224,7 +229,9 @@ function CategoryDetail({ category }) {
               ALL CATEGORIES
             </Link>
 
-            <span>WEIRDWEALTH / {category.title.toUpperCase()}</span>
+            <span>
+              WEIRDWEALTH / {category.title.toUpperCase()}
+            </span>
           </div>
 
           <div className="category-editorial-main">
@@ -272,6 +279,7 @@ function CategoryDetail({ category }) {
             <span className="category-list-eyebrow">
               THE WEIRDWEALTH JOURNAL
             </span>
+
             <h2>Explore the latest stories.</h2>
           </div>
 
@@ -434,7 +442,9 @@ function CategoryDetail({ category }) {
         <div>
           <span>KEEP EXPLORING</span>
           <h2>Curiosity creates opportunity.</h2>
-          <p>Discover more ideas across the WeirdWealth journal.</p>
+          <p>
+            Discover more ideas across the WeirdWealth journal.
+          </p>
         </div>
 
         <Link to="/categories">

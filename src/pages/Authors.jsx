@@ -17,29 +17,40 @@ export default function Authors() {
       <Header />
 
       <main className="authors-directory">
+        {/* AUTHORS HERO */}
         <section className="authors-hero authors-image-hero">
-          <div className="authors-hero-background" aria-hidden="true" />
-          <div className="authors-hero-overlay" aria-hidden="true" />
+          <div
+            className="authors-hero-background"
+            aria-hidden="true"
+          />
 
-          <div className="authors-hero-inner">
-            <span className="authors-eyebrow">
-              <Users size={15} />
-              THE PEOPLE BEHIND THE IDEAS
-            </span>
+          <div
+            className="authors-hero-overlay"
+            aria-hidden="true"
+          />
 
-            <h1>
-              Meet the minds
-              <br />
-              <span>shaping tomorrow.</span>
-            </h1>
+          <div className="container authors-hero-container">
+            <div className="authors-hero-content">
+              <span className="authors-eyebrow">
+                <Users size={15} />
+                THE PEOPLE BEHIND THE IDEAS
+              </span>
 
-            <p>
-              Meet the voices sharing fresh perspectives on money,
-              digital skills, and modern living.
-            </p>
+              <h1>
+                Meet the minds
+                <br />
+                <span>shaping tomorrow.</span>
+              </h1>
+
+              <p>
+                Meet the voices sharing fresh perspectives on money,
+                digital skills, and modern living.
+              </p>
+            </div>
 
             <div className="authors-hero-bottom">
               <span>OUR CONTRIBUTORS</span>
+
               <span>
                 {authors.length.toString().padStart(2, "0")} AUTHORS
               </span>
@@ -47,12 +58,14 @@ export default function Authors() {
           </div>
         </section>
 
+        {/* AUTHORS DIRECTORY */}
         <section className="authors-content">
           <div className="authors-section-heading">
             <div>
               <span className="authors-section-label">
                 THE EDITORIAL TEAM
               </span>
+
               <h2>Our contributors</h2>
             </div>
 
@@ -63,6 +76,7 @@ export default function Authors() {
             </p>
           </div>
 
+          {/* AUTHORS GRID */}
           <div className="authors-grid">
             {authors.map((author, index) => (
               <article
@@ -130,6 +144,7 @@ export default function Authors() {
             ))}
           </div>
 
+          {/* BACK TO ARTICLES */}
           <div className="authors-back-link">
             <Link to="/blog">
               <ArrowLeft size={16} />

@@ -59,6 +59,7 @@ export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const search = searchParams.get("q") || "";
+
   const activeCategory = categories.includes(searchParams.get("category"))
     ? searchParams.get("category")
     : "All";
@@ -191,21 +192,23 @@ export default function Blog() {
           <div className="blog-hero-overlay" aria-hidden="true" />
 
           <div className="container blog-hero-inner">
-            <span className="section-eyebrow">
-              THE WEIRDWEALTH JOURNAL
-            </span>
-
-            <h1>
-              Knowledge That
-              <br />
-              <span className="accent-text">
-                Moves You Forward.
+            <div className="blog-hero-content">
+              <span className="section-eyebrow">
+                THE WEIRDWEALTH JOURNAL
               </span>
-            </h1>
 
-            <p>
-              Smarter ideas on money, digital skills and modern living.
-            </p>
+              <h1>
+                Knowledge That
+                <br />
+                <span className="accent-text">
+                  Moves You Forward.
+                </span>
+              </h1>
+
+              <p>
+                Smarter ideas on money, digital skills and modern living.
+              </p>
+            </div>
 
             <div className="blog-hero-bottom">
               <span>
@@ -357,7 +360,10 @@ export default function Blog() {
                     const slug = getSlug(article);
 
                     return (
-                      <article className="blog-article-card" key={slug}>
+                      <article
+                        className="blog-article-card"
+                        key={slug}
+                      >
                         <Link
                           to={`/blog/${slug}`}
                           className="blog-article-image"
