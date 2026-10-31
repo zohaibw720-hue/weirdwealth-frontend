@@ -46,15 +46,8 @@ export default function HeroSection() {
       <div className="hero-grain" aria-hidden="true" />
 
       <div className="container hero-container">
-
         {/* Main Hero Content */}
         <div className="hero-content">
-
-          <div className="hero-label">
-            <span className="status-dot" aria-hidden="true" />
-            THE FUTURE OF MODERN WEALTH
-          </div>
-
           <h1 id="hero-title">
             Make Money.
             <br />
