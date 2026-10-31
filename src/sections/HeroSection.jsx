@@ -80,15 +80,15 @@ export default function HeroSection() {
           {/* Trust Information */}
           <div className="hero-trust">
             <div className="trust-avatars" aria-hidden="true">
-              <span>W</span>
-              <span>W</span>
-              <span>W</span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
 
             <p>
-              <strong>Learn. Grow. Build.</strong>
+              
               <br />
-              A smarter approach to modern wealth.
+            
             </p>
           </div>
         </div>
